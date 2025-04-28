@@ -14,9 +14,9 @@ public class TLMBRule extends TienLenRule {
             case 2:
                 return isPair(chosenCards) && chosenCards.get(0).checkColorSuit(chosenCards.get(1));
             case 3:
-                return isTriple(chosenCards) && sameSuit(chosenCards);
+                return isTriple(chosenCards);
             default:
-                return isStraight(chosenCards) && sameSuit(chosenCards);
+                return (isStraight(chosenCards) && sameSuit(chosenCards)) || isFourOfAKind(chosenCards);
         }
     }
 
