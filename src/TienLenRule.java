@@ -7,9 +7,25 @@ public abstract class TienLenRule {
 
     public abstract boolean isValid(ArrayList<CardPlayingCard> chosenCards);
 
-    public abstract boolean canBeat(ArrayList<CardPlayingCard> preChosenCards, ArrayList<CardPlayingCard> chosenCards);
+    public abstract boolean canBeat(ArrayList<CardPlayingCard> preChosenCards,
+                                    ArrayList<CardPlayingCard> chosenCards);
 
-    protected abstract boolean validateSpecialCases(ArrayList<CardPlayingCard> preChosenCards, ArrayList<CardPlayingCard> chosenCards);
+    protected abstract boolean validateSpecialCases(ArrayList<CardPlayingCard> preChosenCards,
+                                                    ArrayList<CardPlayingCard> chosenCards);
+
+    protected abstract boolean validateSingle(ArrayList<CardPlayingCard> preChosenCards,
+                                              ArrayList<CardPlayingCard> chosenCards);
+
+    protected abstract boolean validatePair(ArrayList<CardPlayingCard> preChosenCards,
+                                            ArrayList<CardPlayingCard> chosenCards);
+
+    protected boolean validateTriple(ArrayList<CardPlayingCard> lastPlayedCards,
+                                     ArrayList<CardPlayingCard> chosenCards) {
+        return chosenCards.get(2).compareTo(lastPlayedCards.get(2)) > 0;
+    }
+
+    protected abstract boolean validateStraight(ArrayList<CardPlayingCard> preChosenCards,
+                                                ArrayList<CardPlayingCard> chosenCards);
 
     protected boolean isPair(ArrayList<CardPlayingCard> cards) {
         if (cards.size() != 2) return false;

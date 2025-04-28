@@ -36,30 +36,25 @@ public class TLMNRule extends TienLenRule {
         int preSize = preChosenCards.size();
         int currSize = chosenCards.size();
 
-        // Standard comparison: same type, same quantity
-        if (preSize == currSize) {
-            if (isPair(preChosenCards) && isPair(chosenCards)) {
-                return chosenCards.get(1).compareTo(preChosenCards.get(1)) > 0;
-            }
-            if (isTriple(preChosenCards) && isTriple(chosenCards)) {
-                return chosenCards.get(2).compareTo(preChosenCards.get(2)) > 0;
-            }
-            if (isFourOfAKind(preChosenCards) && isFourOfAKind(chosenCards)) {
-                return chosenCards.get(3).compareTo(preChosenCards.get(3)) > 0;
-            }
-            if (isStraight(preChosenCards) && isStraight(chosenCards)) {
-                return chosenCards.get(currSize - 1).compareTo(preChosenCards.get(preSize - 1)) > 0;
-            }
-            if (isSequencePair(preChosenCards) && isSequencePair(chosenCards)) {
-                return chosenCards.get(currSize - 1).compareTo(preChosenCards.get(preSize - 1)) > 0;
-            }
+        if (preSize != currSize) {
+            return false;
         }
 
-        return false;
+        switch (currSize) {
+            case 1:
+                return validateSingle(preChosenCards, chosenCards);
+            case 2:
+                return validatePair(preChosenCards, chosenCards);
+            case 3:
+                return validateTriple(preChosenCards, chosenCards);
+            default:
+                return validateStraight(preChosenCards, chosenCards);
+        }
     }
 
     @Override
-    protected boolean validateSpecialCases(ArrayList<CardPlayingCard> preChosenCards, ArrayList<CardPlayingCard> chosenCards) {
+    protected boolean validateSpecialCases(ArrayList<CardPlayingCard> preChosenCards,
+                                           ArrayList<CardPlayingCard> chosenCards) {
         // 3 consecutive pairs can beat 2 (highest card)
         if (isThreeConsecutivePairs(chosenCards) && preChosenCards.size() == 1) {
             CardPlayingCard target = preChosenCards.get(0);
@@ -102,5 +97,23 @@ public class TLMNRule extends TienLenRule {
         }
 
         return false;
+    }
+
+    @Override
+    protected boolean validateSingle(ArrayList<CardPlayingCard> lastPlayedCards,
+                                     ArrayList<CardPlayingCard> chosenCards) {
+        return chosenCards.get(0).compareTo(lastPlayedCards.get(0)) > 0;
+    }
+
+    @Override
+    protected boolean validatePair(ArrayList<CardPlayingCard> lastPlayedCards,
+                                   ArrayList<CardPlayingCard> chosenCards) {
+        return chosenCards.get(1).compareTo(lastPlayedCards.get(1)) > 0;
+    }
+
+    @Override
+    protected boolean validateStraight(ArrayList<CardPlayingCard> lastPlayedCards,
+                                       ArrayList<CardPlayingCard> chosenCards) {
+        return chosenCards.get(chosenCards.size() - 1).compareTo(lastPlayedCards.get(lastPlayedCards.size() - 1)) > 0;
     }
 }

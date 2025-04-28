@@ -12,13 +12,17 @@ public class TLMBRule extends TienLenRule {
             case 1:
                 return true;
             case 2:
-                return isPair(chosenCards) && chosenCards.get(0).checkColorSuit(chosenCards.get(1));
+                return isPair(chosenCards) && sameColor(chosenCards);
             case 3:
                 return isTriple(chosenCards);
+            case 4:
+                return isFourOfAKind(chosenCards);
             default:
-                return (isStraight(chosenCards) && sameSuit(chosenCards)) || isFourOfAKind(chosenCards);
+                return (isStraight(chosenCards) && sameSuit(chosenCards)) ||
+                        (isSequencePair(chosenCards) && sameColor(chosenCards));
         }
     }
+
 
     @Override
     public boolean canBeat(ArrayList<CardPlayingCard> preChosenCards, ArrayList<CardPlayingCard> chosenCards) {
@@ -51,7 +55,8 @@ public class TLMBRule extends TienLenRule {
     }
 
     @Override
-    protected boolean validateSpecialCases(ArrayList<CardPlayingCard> preChosenCards, ArrayList<CardPlayingCard> chosenCards) {
+    protected boolean validateSpecialCases(ArrayList<CardPlayingCard> preChosenCards,
+                                           ArrayList<CardPlayingCard> chosenCards) {
         // 3 consecutive pairs can beat 2 (highest card in TLMB)
         if (isThreeConsecutivePairs(chosenCards) && preChosenCards.size() == 1) {
             CardPlayingCard target = preChosenCards.get(0);
@@ -84,41 +89,49 @@ public class TLMBRule extends TienLenRule {
         return false;
     }
 
+    @Override
+    protected boolean validateSingle(ArrayList<CardPlayingCard> preChosenCars,
+                                     ArrayList<CardPlayingCard> chosenCards) {
+        // Must be same suit
+        if (!preChosenCars.get(0).getSuit().equals(chosenCards.get(0).getSuit())) {
+            return false;
+        }
+        return chosenCards.get(0).compareTo(preChosenCars.get(0)) > 0;
+    }
+
+    @Override
+    protected boolean validatePair(ArrayList<CardPlayingCard> preChosenCars,
+                                   ArrayList<CardPlayingCard> chosenCards) {
+        // Must be same color
+        if (!preChosenCars.get(0).checkColorSuit(chosenCards.get(0))) {
+            return false;
+        }
+        return chosenCards.get(1).compareTo(preChosenCars.get(1)) > 0;
+    }
+
+    @Override
+    protected boolean validateStraight(ArrayList<CardPlayingCard> preChosenCars,
+                                       ArrayList<CardPlayingCard> chosenCards) {
+        // Must be same suit
+        if (!preChosenCars.get(0).getSuit().equals(chosenCards.get(0).getSuit())) {
+            return false;
+        }
+        return chosenCards.get(chosenCards.size() - 1).compareTo(preChosenCars.get(preChosenCars.size() - 1)) > 0;
+    }
+
     // Helper methods for TLMB specific rules
     private boolean sameSuit(ArrayList<CardPlayingCard> cards) {
         String suit = cards.get(0).getSuit();
         return cards.stream().allMatch(c -> c.getSuit().equals(suit));
     }
 
-    private boolean validateSingle(ArrayList<CardPlayingCard> lastPlayedCards, ArrayList<CardPlayingCard> chosenCards) {
-        // Must be same suit
-        if (!lastPlayedCards.get(0).getSuit().equals(chosenCards.get(0).getSuit())) {
-            return false;
-        }
-        return chosenCards.get(0).compareTo(lastPlayedCards.get(0)) > 0;
-    }
+    private boolean sameColor(ArrayList<CardPlayingCard> cards) {
+        CardPlayingCard card = cards.get(0);
 
-    private boolean validatePair(ArrayList<CardPlayingCard> lastPlayedCards, ArrayList<CardPlayingCard> chosenCards) {
-        // Must be same color
-        if (!lastPlayedCards.get(0).checkColorSuit(chosenCards.get(0))) {
-            return false;
+        for (CardPlayingCard x: cards) {
+            if (!x.checkColorSuit(card)) return false;
         }
-        return chosenCards.get(1).compareTo(lastPlayedCards.get(1)) > 0;
-    }
 
-    private boolean validateTriple(ArrayList<CardPlayingCard> lastPlayedCards, ArrayList<CardPlayingCard> chosenCards) {
-        // Must be same suit
-        if (!lastPlayedCards.get(0).getSuit().equals(chosenCards.get(0).getSuit())) {
-            return false;
-        }
-        return chosenCards.get(2).compareTo(lastPlayedCards.get(2)) > 0;
-    }
-
-    private boolean validateStraight(ArrayList<CardPlayingCard> lastPlayedCards, ArrayList<CardPlayingCard> chosenCards) {
-        // Must be same suit
-        if (!lastPlayedCards.get(0).getSuit().equals(chosenCards.get(0).getSuit())) {
-            return false;
-        }
-        return chosenCards.get(chosenCards.size() - 1).compareTo(lastPlayedCards.get(lastPlayedCards.size() - 1)) > 0;
+        return true;
     }
 }
