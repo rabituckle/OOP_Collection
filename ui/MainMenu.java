@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import game.BaCay;
 import game.TienLen;
 import game.TienLenMienBac;
 import game.TienLenMienNam;
@@ -381,7 +382,7 @@ public class MainMenu{
     
     public void startGame() {
     	if(typeGame == 0) {
-    		
+    		BaCay game = new BaCay(modeGUI, numPlayers, numBots);
     	}
     	else if(typeGame == 1) {
     		TienLen game = new TienLenMienNam(modeGUI, numPlayers, numBots);
