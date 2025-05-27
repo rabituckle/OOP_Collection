@@ -125,6 +125,7 @@ public class PlayerNameScreen extends MenuScreen {
             JButton startButton = MenuComponents.createStyledButton("START", 250, 50);
             startButton.addActionListener(e -> {
                 savePlayerNames(names);
+		this.close();
                 gameConfig.startGame();
             });
             buttonPanel.add(startButton);
